@@ -4,7 +4,7 @@ import platform
 from collections import defaultdict
 from pathlib import Path
 
-def find_duplicates(target_dir: str) -> list:
+def find_duplicates(target_dir: str, ignore_folders: list = None) -> list:
     target_path = Path(target_dir).resolve()
 
     current_os = platform.system()
@@ -15,11 +15,14 @@ def find_duplicates(target_dir: str) -> list:
         if str(target_path).startswith("/boot") or str(target_path) == "/":
             raise PermissionError("Safety Guardrail: Scanning root/boot is prohibited.")
 
-  
+    # Always skip these noise dirs, plus any folder names the user passed in.
+    ignore_set = {'.git', 'node_modules', '__pycache__'} | set(ignore_folders or [])
+
+
     # STAGE 1: The Flat Crawler (Size Grouping)
-  
+
     size_groups = defaultdict(list)
-    
+
     def _flat_scan(current_path: str):
         try:
             with os.scandir(current_path) as it:
@@ -32,7 +35,7 @@ def find_duplicates(target_dir: str) -> list:
                         except (OSError, FileNotFoundError):
                             pass
                     elif entry.is_dir(follow_symlinks=False):
-                        if entry.name not in ['.git', 'node_modules', '__pycache__']:
+                        if entry.name not in ignore_set:
                             _flat_scan(entry.path)
         except (PermissionError, OSError):
             pass

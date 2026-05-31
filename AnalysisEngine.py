@@ -1,11 +1,14 @@
 import os
 import time
 
-def get_top_50_files(target_path: str) -> list:
+def get_top_50_files(target_path: str, ignore_folders: list = None) -> list:
     """Scans the target directory and returns the 50 absolute largest files."""
     all_files = []
-    
-    for root, _, files in os.walk(target_path):
+    ignore_set = set(ignore_folders or [])
+
+    for root, dirs, files in os.walk(target_path):
+        # Prune ignored folders in-place so os.walk skips descending into them
+        dirs[:] = [d for d in dirs if d not in ignore_set]
         for file in files:
             filepath = os.path.join(root, file)
             try:
@@ -25,7 +28,7 @@ def get_top_50_files(target_path: str) -> list:
     all_files.sort(key=lambda x: x["size_bytes"], reverse=True)
     return all_files[:50]
 
-def get_stale_files(target_path: str, days_old: int = 365, min_size_mb: int = 50) -> list:
+def get_stale_files(target_path: str, days_old: int = 365, min_size_mb: int = 50, ignore_folders: list = None) -> list:
     """
     Finds large files (>50MB) that haven't been modified or accessed in over a year.
     """
@@ -33,8 +36,11 @@ def get_stale_files(target_path: str, days_old: int = 365, min_size_mb: int = 50
     current_time = time.time()
     seconds_in_days = days_old * 24 * 60 * 60
     min_bytes = min_size_mb * 1024 * 1024
+    ignore_set = set(ignore_folders or [])
 
-    for root, _, files in os.walk(target_path):
+    for root, dirs, files in os.walk(target_path):
+        # Prune ignored folders in-place so os.walk skips descending into them
+        dirs[:] = [d for d in dirs if d not in ignore_set]
         for file in files:
             filepath = os.path.join(root, file)
             try:

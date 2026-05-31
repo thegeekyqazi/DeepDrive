@@ -117,11 +117,12 @@ def scan_directory(target_path: str = ".", ignore_folders: str = ""):
 # TAB 2: SMART DEDUPLICATOR
 # ==========================================
 @app.get("/api/duplicates")
-def get_duplicates(target_path: str = "."):
+def get_duplicates(target_path: str = ".", ignore_folders: str = ""):
     if not os.path.exists(target_path):
         raise HTTPException(status_code=404, detail="Directory not found")
+    ignore_list = [f.strip() for f in ignore_folders.split(",")] if ignore_folders else []
     try:
-        return find_duplicates(target_path)
+        return find_duplicates(target_path, ignore_folders=ignore_list)
     except PermissionError as e:
         raise HTTPException(status_code=403, detail=str(e))
 
@@ -199,20 +200,22 @@ def api_disable_telemetry():
 # TAB 5: FILE RADAR
 # ==========================================
 @app.get("/api/radar/top50")
-def api_top50(target_path: str = "."):
+def api_top50(target_path: str = ".", ignore_folders: str = ""):
     if not os.path.exists(target_path):
         raise HTTPException(status_code=404, detail="Directory not found")
+    ignore_list = [f.strip() for f in ignore_folders.split(",")] if ignore_folders else []
     try:
-        return get_top_50_files(target_path)
+        return get_top_50_files(target_path, ignore_folders=ignore_list)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/radar/stale")
-def api_stale(target_path: str = "."):
+def api_stale(target_path: str = ".", ignore_folders: str = ""):
     if not os.path.exists(target_path):
         raise HTTPException(status_code=404, detail="Directory not found")
+    ignore_list = [f.strip() for f in ignore_folders.split(",")] if ignore_folders else []
     try:
-        return get_stale_files(target_path)
+        return get_stale_files(target_path, ignore_folders=ignore_list)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
