@@ -1,5 +1,7 @@
 import os
 import sys
+import threading
+import webbrowser
 import uvicorn
 import platform
 from fastapi import FastAPI, HTTPException
@@ -7,6 +9,9 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
+
+# Resolve base path whether running as a script or a PyInstaller bundle
+BASE_PATH = sys._MEIPASS if getattr(sys, "frozen", False) else os.path.dirname(os.path.abspath(__file__))
 
 
 # --- Universal Custom Engines ---
@@ -31,7 +36,13 @@ else:
     def disable_windows_telemetry(): return {"status": "error", "message": "Privacy Tweaks are Windows-only."}
 
 app = FastAPI(title="DeepDrive API")
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory=os.path.join(BASE_PATH, "static")), name="static")
+
+@app.get("/", response_class=HTMLResponse)
+def serve_index():
+    with open(os.path.join(BASE_PATH, "index.html"), encoding="utf-8") as f:
+        return f.read()
+
 @app.get("/api/system_status")
 def system_status():
     """Tells the frontend if we are in Read-Only Root Mode."""
@@ -227,4 +238,5 @@ if __name__ == "__main__":
             print("\n[*] Running in User Mode. You can delete files in your /home directory.")
             print("    (To view the entire '/' filesystem, restart app with 'sudo python3 server.py')\n")
 
-    uvicorn.run("server:app", host="127.0.0.1", port=8000, reload=True)
+    threading.Timer(1.5, lambda: webbrowser.open("http://127.0.0.1:8000")).start()
+    uvicorn.run("server:app", host="127.0.0.1", port=8000)
