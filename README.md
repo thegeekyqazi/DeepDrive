@@ -7,6 +7,16 @@ Built with a lightweight **Python/FastAPI** backend and a premium, responsive, *
 
 ---
 
+## ⬇️ Download
+
+**[→ Grab the latest release](https://github.com/thegeekyqazi/DeepDrive/releases/latest)**
+
+Download `DeepDrive.exe`, double-click, accept the UAC prompt, and the app opens in your browser automatically. No Python or installation required.
+
+> **Note:** Windows SmartScreen may show a warning on first launch because the exe is unsigned. Click **"More info" → "Run anyway"** to proceed. This is expected for open-source tools without a paid code-signing certificate.
+
+---
+
 ## ✨ Core Features
 
 ### 1. 📊 Visual Disk Mapper
@@ -54,29 +64,28 @@ Deleting system files is dangerous. DeepDrive is built with extreme safety const
 * **Frontend:** Modular Vanilla HTML5, CSS3, JavaScript (ES6+)
 * **Data Visualization:** Plotly.js
 * **Icons:** Google Material Icons
+* **Packaging:** PyInstaller (single `.exe` via GitHub Actions)
 
 ---
 
-## 🚀 Quickstart Installation
+## 🛠️ Running from Source
 
-Because the core engines rely entirely on Python's standard library, the dependency footprint is incredibly small.
+For developers who want to run or modify DeepDrive directly.
 
 **1. Clone the repository**
 ```bash
-git clone [https://github.com/thegeekyqazi/DeepDrive.git](https://github.com/thegeekyqazi/DeepDrive.git)
+git clone https://github.com/thegeekyqazi/DeepDrive.git
 cd DeepDrive
 ```
-**2. Setup a Virtual Environment & Install API requirements**
+**2. Install dependencies**
 ```bash
-python3 -m venv venv
-source venv/bin/activate  # On Windows use: venv\Scripts\activate
-pip install fastapi uvicorn pydantic
+pip install -r requirements.txt
 ```
 **3. Boot the application**
 ```bash
 python server.py
 ```
-*Note: On Windows, DeepDrive will automatically prompt you for Administrator privileges (UAC). On Linux, it will safely boot into User Mode restricted to your `/home` directory.*
+*On Windows, DeepDrive will automatically prompt for Administrator privileges (UAC). On Linux, it boots in User Mode restricted to your `/home` directory.*
 
 ---
 
