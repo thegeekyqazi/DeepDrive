@@ -4,3 +4,8 @@ __pycache__/
 venv/
 .env
 *.log
+
+# PyInstaller
+dist/
+build/
+*.spec

@@ -239,4 +239,4 @@ if __name__ == "__main__":
             print("    (To view the entire '/' filesystem, restart app with 'sudo python3 server.py')\n")
 
     threading.Timer(1.5, lambda: webbrowser.open("http://127.0.0.1:8000")).start()
-    uvicorn.run("server:app", host="127.0.0.1", port=8000)
+    uvicorn.run(app, host="127.0.0.1", port=8000, log_config=None)
